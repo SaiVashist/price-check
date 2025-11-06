@@ -17,6 +17,8 @@ public class PriceServiceImpl implements PriceService{
 
     // Holds the last published price for each instrument id
 
+            // its better to use conccurrent hash map when we are dealing with threads
+
     private final ConcurrentHashMap<String,PriceRecord> lastPrices = new ConcurrentHashMap<>();
     // Holds batches in progress
 
@@ -91,6 +93,7 @@ public class PriceServiceImpl implements PriceService{
 
     /**
      * @param batchId
+     * to make application resilient I am having cancelBatch as well , theis stops storing partial data
      */
     @Override
     public void cancelBatch(String batchId) {
@@ -105,6 +108,8 @@ public class PriceServiceImpl implements PriceService{
     /**
      * @param id
      * @return
+     *
+     * this methgod is responsible  to get final price data
      */
     @Override
     public PriceRecord getPriceData(String id) {
@@ -120,6 +125,11 @@ public class PriceServiceImpl implements PriceService{
 
 
     // Helper class for batch context
+
+    /*
+
+    thought of having just batch and handle all methods individually but having a batchcontect which will have all major like like add, finilizebatch makes code cleaner and simpler
+     */
     private static class BatchContext {
         private final String batchId;
         private final List<PriceRecord> records = new ArrayList<>();
