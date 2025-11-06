@@ -8,10 +8,10 @@ public interface PriceService {
     /*
     This metod will start a new batch
      */
-    String startBatch();
+    String startBatch() throws Exception;
 
 
-    void uploadChunk(String batchID , List<PriceRecord> priceData);
+    void uploadChunk(String batchID , List<PriceRecord> priceData) throws Exception;
 
     void completeBatch(String batchId);
 
