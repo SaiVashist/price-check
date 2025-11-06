@@ -1,41 +1,58 @@
 package org.pricetrack;
 
-
 import java.time.Instant;
 import java.util.Map;
+import java.util.Objects;
 
-/*
-Class to hold the price data
-this will hold all the information releated to the price
+/**
+ * Immutable price record: id, asOf (producer-set time), flexible payload.
  */
-public class PriceRecord {
+public final class PriceRecord {
+    private final String id;
+    private final Instant asOf; // use the assignment's naming
+    private final Map<String, Object> payload;
 
-    public PriceRecord(String id, Instant asOfNow, Map<String, Object> payload) {
-        this.id = id;
-        this.asOfNow = asOfNow;
-        this.payload = payload;
+    public PriceRecord(String id, Instant asOf, Map<String, Object> payload) {
+        this.id = Objects.requireNonNull(id, "id");
+        this.asOf = Objects.requireNonNull(asOf, "asOf");
+        this.payload = Map.copyOf(Objects.requireNonNull(payload, "payload"));
     }
 
     public String getId() {
         return id;
     }
 
-    public Instant getAsOfNow() {
-        return asOfNow;
+    public Instant getAsOfNow() { // keep your older name if impl uses it
+        return asOf;
+    }
+
+    public Instant getAsOf() { // also expose canonical getter
+        return asOf;
     }
 
     public Map<String, Object> getPayload() {
         return payload;
     }
 
-    private final String id;
+    @Override
+    public String toString() {
+        return "PriceRecord{" +
+                "id='" + id + '\'' +
+                ", asOf=" + asOf +
+                ", payload=" + payload +
+                '}';
+    }
 
-    private final Instant asOfNow;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PriceRecord)) return false;
+        PriceRecord that = (PriceRecord) o;
+        return id.equals(that.id) && asOf.equals(that.asOf) && payload.equals(that.payload);
+    }
 
-    private final Map<String , Object> payload;
-
-
-
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, asOf, payload);
+    }
 }
